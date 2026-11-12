@@ -1,0 +1,92 @@
+
+INCLUDE Irvine32.inc
+
+.data
+    num1 DWORD ?
+    num2 DWORD ?
+    num3 DWORD ?
+    num4 DWORD ?
+    num5 DWORD ?
+
+    total DWORD ?
+    avg DWORD ?
+
+    msg1 BYTE "Enter first integer: ", 0
+    msg2 BYTE "Enter second integer: ", 0
+    msg3 BYTE "Enter third integer: ", 0
+    msg4 BYTE "Enter fourth integer: ", 0
+    msg5 BYTE "Enter fifth integer: ", 0
+
+    sumMsg BYTE "Sum: ", 0
+    avgMsg BYTE "Average: ", 0
+
+.code
+main PROC
+
+    ; 첫 번째 정수 입력
+    mov edx, OFFSET msg1
+    call WriteString
+    call ReadInt
+    mov num1, eax
+
+    ; 두 번째 정수 입력
+    mov edx, OFFSET msg2
+    call WriteString
+    call ReadInt
+    mov num2, eax
+
+    ; 세 번째 정수 입력
+    mov edx, OFFSET msg3
+    call WriteString
+    call ReadInt
+    mov num3, eax
+
+    ; 네 번째 정수 입력
+    mov edx, OFFSET msg4
+    call WriteString
+    call ReadInt
+    mov num4, eax
+
+    ; 다섯 번째 정수 입력
+    mov edx, OFFSET msg5
+    call WriteString
+    call ReadInt
+    mov num5, eax
+
+    ; 5개 정수의 합 계산
+    mov eax, num1
+    add eax, num2
+    add eax, num3
+    add eax, num4
+    add eax, num5
+
+    mov total, eax
+
+    ; 합계 출력
+    mov edx, OFFSET sumMsg
+    call WriteString
+
+    mov eax, total
+    call WriteInt
+    call Crlf
+
+    ; 평균 계산 (합계 / 5)
+    mov eax, total
+    cdq
+    mov ebx, 5
+    idiv ebx
+
+    mov avg, eax
+
+    ; 평균 출력
+    mov edx, OFFSET avgMsg
+    call WriteString
+
+    mov eax, avg
+    call WriteInt
+    call Crlf
+
+    exit
+
+main ENDP
+END main
