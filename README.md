@@ -1,2 +1,2 @@
 # assem
-2주차 과제 착각하여 09.22 12:03 AM 에 추가 제출 하였습니다.
+<img width="1512" height="667" alt="MASM 프로그램 실행 결과 콘솔 화면" src="https://github.com/user-attachments/assets/dedfc317-c094-41bd-9d9c-197896d8ed6b" />
