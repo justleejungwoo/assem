@@ -1,0 +1,163 @@
+.386
+.model flat, c
+option casemap:none
+
+includelib legacy_stdio_definitions.lib
+
+extern printf : proc
+extern scanf_s : proc
+
+.data
+    fmtIn1      db "첫 번째 정수 입력: ", 0
+    fmtIn2      db "두 번째 정수 입력: ", 0
+    fmtScan     db "%d", 0
+
+    fmtAdd      db 0Dh, 0Ah, "덧셈 (A + B) = %d", 0Dh, 0Ah, 0
+    fmtSub      db "뺄셈 (A - B) = %d", 0Dh, 0Ah, 0
+    fmtMul      db "곱셈 (A * B) = %d", 0Dh, 0Ah, 0
+    fmtDiv      db "나눗셈 (A / B) = %d", 0Dh, 0Ah, 0
+    fmtDivZero  db "나눗셈 (A / B) = 오류 (0으로 나눌 수 없음)", 0Dh, 0Ah, 0
+
+    fmtRegs     db "--- 레지스터 상태 (HEX) ---", 0Dh, 0Ah, 0
+    fmtAX       db "EAX = 0x%08X", 0Dh, 0Ah, 0
+    fmtBX       db "EBX = 0x%08X", 0Dh, 0Ah, 0
+    fmtCX       db "ECX = 0x%08X", 0Dh, 0Ah, 0
+    fmtDX       db "EDX = 0x%08X", 0Dh, 0Ah, 0
+
+    numA        dd 0
+    numB        dd 0
+
+    regEAX      dd 0
+    regEBX      dd 0
+    regECX      dd 0
+    regEDX      dd 0
+
+.code
+main proc
+    ; 1. 첫 번째 정수 입력
+    push offset fmtIn1
+    call printf
+    add esp, 4
+
+    push offset numA
+    push offset fmtScan
+    call scanf_s
+    add esp, 8
+
+    ; 2. 두 번째 정수 입력
+    push offset fmtIn2
+    call printf
+    add esp, 4
+
+    push offset numB
+    push offset fmtScan
+    call scanf_s
+    add esp, 8
+
+    ; 3. 덧셈
+    mov eax, numA
+    mov ebx, numB
+    xor ecx, ecx
+    xor edx, edx
+    add eax, ebx
+    call SaveRegs
+
+    push regEAX
+    push offset fmtAdd
+    call printf
+    add esp, 8
+    call PrintRegs
+
+    ; 4. 뺄셈
+    mov eax, numA
+    mov ebx, numB
+    xor ecx, ecx
+    xor edx, edx
+    sub eax, ebx
+    call SaveRegs
+
+    push regEAX
+    push offset fmtSub
+    call printf
+    add esp, 8
+    call PrintRegs
+
+    ; 5. 곱셈
+    mov eax, numA
+    mov ebx, numB
+    xor ecx, ecx
+    xor edx, edx
+    imul ebx
+    call SaveRegs
+
+    push regEAX
+    push offset fmtMul
+    call printf
+    add esp, 8
+    call PrintRegs
+
+    ; 6. 나눗셈
+    mov ebx, numB
+    cmp ebx, 0
+    je DivByZero
+
+    mov eax, numA
+    xor ecx, ecx
+    cdq
+    idiv ebx
+    call SaveRegs
+
+    push regEAX
+    push offset fmtDiv
+    call printf
+    add esp, 8
+    call PrintRegs
+    jmp DoneProg
+
+DivByZero:
+    push offset fmtDivZero
+    call printf
+    add esp, 4
+
+DoneProg:
+    mov eax, 0
+    ret
+main endp
+
+SaveRegs proc
+    mov regEAX, eax
+    mov regEBX, ebx
+    mov regECX, ecx
+    mov regEDX, edx
+    ret
+SaveRegs endp
+
+PrintRegs proc
+    push offset fmtRegs
+    call printf
+    add esp, 4
+
+    push regEAX
+    push offset fmtAX
+    call printf
+    add esp, 8
+
+    push regEBX
+    push offset fmtBX
+    call printf
+    add esp, 8
+
+    push regECX
+    push offset fmtCX
+    call printf
+    add esp, 8
+
+    push regEDX
+    push offset fmtDX
+    call printf
+    add esp, 8
+
+    ret
+PrintRegs endp
+
+end
